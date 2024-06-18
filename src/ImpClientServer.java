@@ -109,17 +109,6 @@ public class ImpClientServer extends UnicastRemoteObject implements ClientServer
 
     @Override
     public void receiveProcessedImages(String[][] files) throws RemoteException {
-        if (process.equals("sequential")) {
-            endTimeSecuencial = System.currentTimeMillis();
-            labelTiempoSecuencial.setText("Tiempo: " + (endTimeSecuencial - startTimeSecuencial) + " ms");
-        } else if (process.equals("forkJoin")) {
-            endTimeForkJoin = System.currentTimeMillis();
-            labelTiempoForkJoin.setText("Tiempo: " + (endTimeForkJoin - startTimeForkJoin) + " ms");
-        } else if (process.equals("executorService")) {
-            endTimeExecutorService = System.currentTimeMillis();
-            labelTiempoExecutorService.setText("Tiempo: " + (endTimeExecutorService - startTimeExecutorService) + " ms");
-        }
-
         for (String[] file : files) {
             byte[] imageBytes = Base64.getDecoder().decode(file[1]);
             File imageFile = new File(textFieldRutaGuardar.getText() + "/" + file[0]);
@@ -130,8 +119,19 @@ public class ImpClientServer extends UnicastRemoteObject implements ClientServer
             }
         }
 
-        JOptionPane.showMessageDialog(null, "Proceso finalizado", "Información", JOptionPane.INFORMATION_MESSAGE);
-
+        SwingUtilities.invokeLater(() -> {
+            if (process.equals("sequential")) {
+                endTimeSecuencial = System.currentTimeMillis();
+                labelTiempoSecuencial.setText("Tiempo: " + (endTimeSecuencial - startTimeSecuencial) + " ms");
+            } else if (process.equals("forkJoin")) {
+                endTimeForkJoin = System.currentTimeMillis();
+                labelTiempoForkJoin.setText("Tiempo: " + (endTimeForkJoin - startTimeForkJoin) + " ms");
+            } else if (process.equals("executorService")) {
+                endTimeExecutorService = System.currentTimeMillis();
+                labelTiempoExecutorService.setText("Tiempo: " + (endTimeExecutorService - startTimeExecutorService) + " ms");
+            }
+            JOptionPane.showMessageDialog(null, "Proceso finalizado", "Información", JOptionPane.INFORMATION_MESSAGE);
+        });
     }
 
     public void IU() {
@@ -247,7 +247,7 @@ public class ImpClientServer extends UnicastRemoteObject implements ClientServer
     }
 
     private void send() {
-        if (!textFieldRuta.getText().isEmpty() && !textFieldRutaGuardar.getText().isEmpty() && comboBoxFiltro.getSelectedIndex() != 0) {
+        if (!textFieldRuta.getText().isEmpty()) {
             File[] files = new File(textFieldRuta.getText()).listFiles();
             try {
                 String[][] base64 = new String[files.length][2];
@@ -262,7 +262,7 @@ public class ImpClientServer extends UnicastRemoteObject implements ClientServer
                 throw new RuntimeException(e);
             }
         } else {
-            JOptionPane.showMessageDialog(null, "Las rutas no pueden estar vacías", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "La ruta no puede estar vacía", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

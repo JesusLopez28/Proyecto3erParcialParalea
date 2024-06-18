@@ -25,6 +25,7 @@ public class ImpMainServer extends UnicastRemoteObject implements MainServer {
     @Override
     public void registerClientServer(ClientServer clientServe, String name) throws RemoteException {
         clients.put(name, clientServe);
+        System.out.println("Client " + name + " registered");
     }
 
     @Override
@@ -37,6 +38,8 @@ public class ImpMainServer extends UnicastRemoteObject implements MainServer {
             System.arraycopy(files, 0, temp, imageFiles.length, files.length);
             imageFiles = temp;
         }
+
+        System.out.println("Received " + files.length + " images");
     }
 
     @Override
@@ -44,6 +47,8 @@ public class ImpMainServer extends UnicastRemoteObject implements MainServer {
         this.option = option;
         this.process = process;
         this.clientName = name;
+
+        System.out.println("Received option " + option + " and process " + process + " from " + name);
         sendImageFiles(imageFiles);
     }
 
@@ -56,6 +61,8 @@ public class ImpMainServer extends UnicastRemoteObject implements MainServer {
                 e.printStackTrace();
             }
         }
+
+        System.out.println("Sent " + files.length + " images to clients");
     }
 
     @Override
@@ -69,11 +76,13 @@ public class ImpMainServer extends UnicastRemoteObject implements MainServer {
             processedImages = temp;
         }
 
+        System.out.println("Received " + files.length + " processed images");
         sendProcessedImages(files);
     }
 
     @Override
     public void sendProcessedImages(String[][] files) throws RemoteException {
+        System.out.println("Sent " + files.length + " processed images to " + this.clientName);
         clients.get(this.clientName).receiveProcessedImages(files);
     }
 }
