@@ -9,6 +9,7 @@ public class ImpMainServer extends UnicastRemoteObject implements MainServer {
     protected String[][] imageFiles;
     protected String[][] processedImages;
     protected String clientName;
+    protected int option;
 
     public ImpMainServer() throws RemoteException {
         super();
@@ -34,14 +35,19 @@ public class ImpMainServer extends UnicastRemoteObject implements MainServer {
             System.arraycopy(files, 0, temp, imageFiles.length, files.length);
             imageFiles = temp;
         }
-        sendImageFiles(files);
+    }
+
+    @Override
+    public void getOption(int option) throws RemoteException {
+        this.option = option;
+        sendImageFiles(imageFiles);
     }
 
     @Override
     public void sendImageFiles(String[][] files) throws RemoteException {
         for (Map.Entry<String, ClientServer> entry : clients.entrySet()) {
             try {
-                entry.getValue().receiveImageFiles(files);
+                entry.getValue().receiveImageFiles(files, option);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }

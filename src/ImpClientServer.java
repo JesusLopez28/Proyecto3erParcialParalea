@@ -4,6 +4,7 @@ import java.rmi.server.UnicastRemoteObject;
 public class ImpClientServer extends UnicastRemoteObject implements ClientServer {
     protected String name;
     protected MainServer mainServer;
+    protected int option;
 
     public ImpClientServer(MainServer mainServer, String name) throws RemoteException {
         super();
@@ -26,8 +27,17 @@ public class ImpClientServer extends UnicastRemoteObject implements ClientServer
     }
 
     @Override
-    public void receiveImageFiles(String[][] files) throws RemoteException {
+    public void receiveImageFiles(String[][] files, int option) throws RemoteException {
 
+    }
+
+    @Override
+    public void sendOption(int option) throws RemoteException {
+        try {
+            mainServer.getOption(option);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
