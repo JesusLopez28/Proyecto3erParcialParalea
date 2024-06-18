@@ -2,10 +2,10 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 public class ImpClientServer extends UnicastRemoteObject implements ClientServer {
-    private String name;
-    private MainServer mainServer;
+    protected String name;
+    protected MainServer mainServer;
 
-    protected ImpClientServer(MainServer mainServer, String name) throws RemoteException {
+    public ImpClientServer(MainServer mainServer, String name) throws RemoteException {
         super();
         this.mainServer = mainServer;
         this.name = name;
@@ -18,7 +18,11 @@ public class ImpClientServer extends UnicastRemoteObject implements ClientServer
 
     @Override
     public void sendImageFiles(String[][] files) throws RemoteException {
-
+        try {
+            mainServer.receiveImageFiles(files, name);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -28,7 +32,11 @@ public class ImpClientServer extends UnicastRemoteObject implements ClientServer
 
     @Override
     public void sendProcessedImages(String[][] files) throws RemoteException {
-
+        try {
+            mainServer.receiveProcessedImages(files);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

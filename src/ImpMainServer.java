@@ -4,12 +4,18 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ImpMainServer extends UnicastRemoteObject implements MainServer{
-    private Map<String, ClientServer> clients;
+public class ImpMainServer extends UnicastRemoteObject implements MainServer {
+    protected Map<String, ClientServer> clients;
+    protected String[][] imageFiles;
+    protected String[][] processedImages;
+    protected String clientName;
 
-    protected ImpMainServer() throws RemoteException {
+    public ImpMainServer() throws RemoteException {
         super();
         clients = new HashMap<>();
+        this.imageFiles = null;
+        this.processedImages = null;
+        this.clientName = null;
     }
 
     @Override
@@ -18,22 +24,47 @@ public class ImpMainServer extends UnicastRemoteObject implements MainServer{
     }
 
     @Override
-    public void receiveImageFiles(String[][] files) throws RemoteException {
-
+    public void receiveImageFiles(String[][] files, String name) throws RemoteException {
+        this.clientName = name;
+        if (imageFiles == null) {
+            imageFiles = files;
+        } else {
+            String[][] temp = new String[imageFiles.length + files.length][];
+            System.arraycopy(imageFiles, 0, temp, 0, imageFiles.length);
+            System.arraycopy(files, 0, temp, imageFiles.length, files.length);
+            imageFiles = temp;
+        }
+        sendImageFiles(files);
     }
 
     @Override
     public void sendImageFiles(String[][] files) throws RemoteException {
-
+        for (Map.Entry<String, ClientServer> entry : clients.entrySet()) {
+            try {
+                entry.getValue().receiveImageFiles(files);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
     public void receiveProcessedImages(String[][] files) throws RemoteException {
+        if (processedImages == null) {
+            processedImages = files;
+        } else {
+            String[][] temp = new String[processedImages.length + files.length][];
+            System.arraycopy(processedImages, 0, temp, 0, processedImages.length);
+            System.arraycopy(files, 0, temp, processedImages.length, files.length);
+            processedImages = temp;
+        }
 
+        sendProcessedImages(files);
     }
 
     @Override
     public void sendProcessedImages(String[][] files) throws RemoteException {
-
+        clients.get(clientName).receiveProcessedImages(files);
+        this.clientName = null;
     }
 }
