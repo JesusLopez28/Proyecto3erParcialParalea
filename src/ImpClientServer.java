@@ -63,7 +63,6 @@ public class ImpClientServer extends UnicastRemoteObject implements ClientServer
     public void sendImageFiles(String[][] files) throws RemoteException {
         try {
             mainServer.receiveImageFiles(files);
-            isSent = true;
             SwingUtilities.invokeLater(() -> {
                 JOptionPane.showMessageDialog(null, "Imágenes enviadas", "Información", JOptionPane.INFORMATION_MESSAGE);
             });
@@ -263,6 +262,7 @@ public class ImpClientServer extends UnicastRemoteObject implements ClientServer
                     base64[i][0] = files[i].getName();
                     base64[i][1] = Base64.getEncoder().encodeToString(Files.readAllBytes(files[i].toPath()));
                 }
+                isSent = true;
                 sendImageFiles(base64);
             } catch (RemoteException e) {
                 e.printStackTrace();
