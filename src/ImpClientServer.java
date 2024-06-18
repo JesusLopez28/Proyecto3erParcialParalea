@@ -129,13 +129,14 @@ public class ImpClientServer extends UnicastRemoteObject implements ClientServer
         SwingUtilities.invokeLater(() -> {
             if (process.equals("sequential")) {
                 endTimeSecuencial = System.currentTimeMillis();
-                labelTiempoSecuencial.setText("Tiempo: " + (endTimeSecuencial - startTimeSecuencial) + " ms");
+                // Poner en milisegundos, segundos, y minutos
+                labelTiempoSecuencial.setText("Tiempo: " + (endTimeSecuencial - startTimeSecuencial) + " ms" + " / " + (endTimeSecuencial - startTimeSecuencial) / 1000 + " s" + " / " + (endTimeSecuencial - startTimeSecuencial) / 60000 + " min");
             } else if (process.equals("forkJoin")) {
                 endTimeForkJoin = System.currentTimeMillis();
-                labelTiempoForkJoin.setText("Tiempo: " + (endTimeForkJoin - startTimeForkJoin) + " ms");
+                labelTiempoForkJoin.setText("Tiempo: " + (endTimeForkJoin - startTimeForkJoin) + " ms" + " / " + (endTimeForkJoin - startTimeForkJoin) / 1000 + " s" + " / " + (endTimeForkJoin - startTimeForkJoin) / 60000 + " min");
             } else if (process.equals("executorService")) {
                 endTimeExecutorService = System.currentTimeMillis();
-                labelTiempoExecutorService.setText("Tiempo: " + (endTimeExecutorService - startTimeExecutorService) + " ms");
+                labelTiempoExecutorService.setText("Tiempo: " + (endTimeExecutorService - startTimeExecutorService) + " ms" + " / " + (endTimeExecutorService - startTimeExecutorService) / 1000 + " s" + " / " + (endTimeExecutorService - startTimeExecutorService) / 60000 + " min");
             }
             JOptionPane.showMessageDialog(null, "Proceso finalizado", "Información", JOptionPane.INFORMATION_MESSAGE);
         });
