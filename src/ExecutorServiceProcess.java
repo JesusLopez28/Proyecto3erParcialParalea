@@ -54,7 +54,7 @@ public class ExecutorServiceProcess {
         public void run() {
             try {
                 SequentialProcess sequentialProcess = new SequentialProcess(new String[][]{file}, option);
-                String[][] filteredFile = sequentialProcess.applyFilter();
+                List<String[]> filteredFile = sequentialProcess.applyFilter();
                 synchronized (filteredFiles) {
                     for (String[] f : filteredFile) {
                         filteredFiles.add(f);

@@ -1,14 +1,16 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.RecursiveAction;
 
 public class ForkJoinProcess extends RecursiveAction {
     protected String[][] files;
     protected int option;
-    protected String[][] filteredFiles;
+    protected List<String[]> filteredFiles;
 
     public ForkJoinProcess(String[][] files, int option) {
         this.files = files;
         this.option = option;
-        this.filteredFiles = new String[files.length][2];
+        this.filteredFiles = new ArrayList<>();
     }
 
     @Override
@@ -28,7 +30,7 @@ public class ForkJoinProcess extends RecursiveAction {
         }
     }
 
-    public String[][] getFilteredFiles() {
+    public List<String[]> getFilteredFiles() {
         return filteredFiles;
     }
 }

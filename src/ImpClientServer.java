@@ -61,6 +61,10 @@ public class ImpClientServer extends UnicastRemoteObject implements ClientServer
     public void sendImageFiles(String[][] files) throws RemoteException {
         try {
             mainServer.receiveImageFiles(files);
+
+            SwingUtilities.invokeLater(() -> {
+                JOptionPane.showMessageDialog(null, "Imágenes enviadas", "Información", JOptionPane.INFORMATION_MESSAGE);
+            });
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -74,12 +78,14 @@ public class ImpClientServer extends UnicastRemoteObject implements ClientServer
 
         if (process.equals("sequential")) {
             SequentialProcess sequentialProcess = new SequentialProcess(files, option);
-            processedImages = sequentialProcess.applyFilter();
+            List<String[]> filteredFiles = sequentialProcess.applyFilter();
+            processedImages = filteredFiles.toArray(new String[filteredFiles.size()][2]);
         } else if (process.equals("forkJoin")) {
             ForkJoinPool pool = ForkJoinPool.commonPool();
             ForkJoinProcess forkJoinProcess = new ForkJoinProcess(files, option);
             pool.invoke(forkJoinProcess);
-            processedImages = forkJoinProcess.getFilteredFiles();
+            List<String[]> filteredFiles = forkJoinProcess.getFilteredFiles();
+            processedImages = filteredFiles.toArray(new String[filteredFiles.size()][2]);
         } else if (process.equals("executorService")) {
             ExecutorServiceProcess executorServiceProcess = new ExecutorServiceProcess(files, option);
             List<String[]> filteredFiles = executorServiceProcess.applyFilter();

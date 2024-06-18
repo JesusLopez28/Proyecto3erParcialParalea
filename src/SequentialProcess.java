@@ -3,21 +3,23 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 public class SequentialProcess {
     protected String[][] files;
     protected int option;
-    protected String[][] filteredFiles;
+    protected List<String[]> filteredFiles;
 
 
     public SequentialProcess(String[][] files, int option) {
         this.files = files;
         this.option = option;
-        this.filteredFiles = new String[files.length][2];
+        this.filteredFiles = new ArrayList<>();
     }
 
-    public String[][] applyFilter() {
+    public List<String[]> applyFilter() {
         for (String[] file : files) {
             byte[] data = Base64.getDecoder().decode(file[1]);
             try {
@@ -45,8 +47,7 @@ public class SequentialProcess {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 ImageIO.write(image, "jpg", baos);
                 String base64 = Base64.getEncoder().encodeToString(baos.toByteArray());
-                filteredFiles[0][0] = file[0];
-                filteredFiles[0][1] = base64;
+                filteredFiles.add(new String[]{file[0], base64});
             } catch (IOException e) {
                 e.printStackTrace();
             }
