@@ -25,8 +25,13 @@ public class ForkJoinProcess extends RecursiveAction {
             System.arraycopy(files, 0, first, 0, half);
             System.arraycopy(files, half, second, 0, second.length);
 
-            invokeAll(new ForkJoinProcess(first, option),
-                    new ForkJoinProcess(second, option));
+            ForkJoinProcess firstTask = new ForkJoinProcess(first, option);
+            ForkJoinProcess secondTask = new ForkJoinProcess(second, option);
+
+            invokeAll(firstTask, secondTask);
+
+            filteredFiles.addAll(firstTask.getFilteredFiles());
+            filteredFiles.addAll(secondTask.getFilteredFiles());
         }
     }
 
