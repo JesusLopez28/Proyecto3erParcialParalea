@@ -12,7 +12,7 @@ public class ImpMainServer extends UnicastRemoteObject implements MainServer {
     protected int option;
     protected String process;
 
-    public ImpMainServer() throws RemoteException {
+    public ImpMainServer() throws RemoteException, IOException {
         super();
         clients = new HashMap<>();
         this.imageFiles = null;
@@ -28,8 +28,7 @@ public class ImpMainServer extends UnicastRemoteObject implements MainServer {
     }
 
     @Override
-    public void receiveImageFiles(String[][] files, String name) throws RemoteException {
-        this.clientName = name;
+    public void receiveImageFiles(String[][] files) throws RemoteException {
         if (imageFiles == null) {
             imageFiles = files;
         } else {
@@ -41,9 +40,10 @@ public class ImpMainServer extends UnicastRemoteObject implements MainServer {
     }
 
     @Override
-    public void getOption(int option, String process) throws RemoteException {
+    public void getOption(int option, String process, String name) throws RemoteException {
         this.option = option;
         this.process = process;
+        this.clientName = name;
         sendImageFiles(imageFiles);
     }
 
