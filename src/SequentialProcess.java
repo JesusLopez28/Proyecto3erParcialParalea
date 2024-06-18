@@ -45,7 +45,7 @@ public class SequentialProcess {
                         break;
                 }
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ImageIO.write(image, "jpg", baos);
+                ImageIO.write(image, "png", baos);
                 String base64 = Base64.getEncoder().encodeToString(baos.toByteArray());
                 filteredFiles.add(new String[]{file[0], base64});
             } catch (IOException e) {
