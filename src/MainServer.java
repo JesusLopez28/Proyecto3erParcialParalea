@@ -5,7 +5,7 @@ public interface MainServer extends Remote {
 
     void receiveImageFiles(String[][] files, String name) throws java.rmi.RemoteException;
 
-    void getOption(int option) throws java.rmi.RemoteException;
+    void getOption(int option, String process) throws java.rmi.RemoteException;
 
     void sendImageFiles(String[][] files) throws java.rmi.RemoteException;
 
