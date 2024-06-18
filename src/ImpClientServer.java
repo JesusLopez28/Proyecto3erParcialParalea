@@ -14,6 +14,7 @@ public class ImpClientServer extends UnicastRemoteObject implements ClientServer
     protected MainServer mainServer;
     protected int option;
     protected String process;
+    protected Boolean isSent;
     protected JFrame frame;
     protected JLabel titulo;
     protected JLabel labelRuta;
@@ -47,6 +48,7 @@ public class ImpClientServer extends UnicastRemoteObject implements ClientServer
         this.name = name;
         this.option = 0;
         this.process = null;
+        this.isSent = false;
 
         try {
             mainServer.registerClientServer(this, name);
@@ -61,7 +63,7 @@ public class ImpClientServer extends UnicastRemoteObject implements ClientServer
     public void sendImageFiles(String[][] files) throws RemoteException {
         try {
             mainServer.receiveImageFiles(files);
-
+            isSent = true;
             SwingUtilities.invokeLater(() -> {
                 JOptionPane.showMessageDialog(null, "Imágenes enviadas", "Información", JOptionPane.INFORMATION_MESSAGE);
             });
@@ -352,6 +354,12 @@ public class ImpClientServer extends UnicastRemoteObject implements ClientServer
             JOptionPane.showMessageDialog(null, "Las rutas no pueden ser iguales", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
+
+        if (!isSent) {
+            JOptionPane.showMessageDialog(null, "Primero envíe las imágenes", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
         return true;
     }
 
