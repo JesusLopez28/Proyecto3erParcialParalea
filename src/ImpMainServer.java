@@ -64,7 +64,6 @@ public class ImpMainServer extends UnicastRemoteObject implements MainServer {
 
     @Override
     public void sendProcessedImages(String[][] files) throws RemoteException {
-        clients.get(clientName).receiveProcessedImages(files);
-        this.clientName = null;
+        clients.get(this.clientName).receiveProcessedImages(files);
     }
 }
