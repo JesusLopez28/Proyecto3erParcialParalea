@@ -12,7 +12,7 @@ public class ForkJoinProcess extends RecursiveAction {
     }
 
     @Override
-    protected void compute() {
+    public void compute() {
         if (files.length <= 2) {
             SequentialProcess sequentialProcess = new SequentialProcess(files, option);
             filteredFiles = sequentialProcess.applyFilter();
@@ -26,5 +26,9 @@ public class ForkJoinProcess extends RecursiveAction {
             invokeAll(new ForkJoinProcess(first, option),
                     new ForkJoinProcess(second, option));
         }
+    }
+
+    public String[][] getFilteredFiles() {
+        return filteredFiles;
     }
 }
