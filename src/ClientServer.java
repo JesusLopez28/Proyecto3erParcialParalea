@@ -10,4 +10,6 @@ public interface ClientServer extends Remote {
     void sendProcessedImages(String[][] files) throws java.rmi.RemoteException;
 
     void receiveProcessedImages(String[][] files) throws java.rmi.RemoteException;
+
+    void getClear() throws java.rmi.RemoteException;
 }

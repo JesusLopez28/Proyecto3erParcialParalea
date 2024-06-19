@@ -62,7 +62,7 @@ public class ImpClientServer extends UnicastRemoteObject implements ClientServer
     @Override
     public void sendImageFiles(String[][] files) throws RemoteException {
         try {
-            mainServer.receiveImageFiles(files);
+            mainServer.receiveImageFiles(files, name);
             SwingUtilities.invokeLater(() -> {
                 JOptionPane.showMessageDialog(null, "Imágenes enviadas", "Información", JOptionPane.INFORMATION_MESSAGE);
             });
@@ -140,6 +140,11 @@ public class ImpClientServer extends UnicastRemoteObject implements ClientServer
             }
             JOptionPane.showMessageDialog(null, "Proceso finalizado", "Información", JOptionPane.INFORMATION_MESSAGE);
         });
+    }
+
+    @Override
+    public void getClear() throws RemoteException {
+        clearFields();
     }
 
     public void IU() {

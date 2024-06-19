@@ -3,7 +3,7 @@ import java.rmi.Remote;
 public interface MainServer extends Remote {
     void registerClientServer(ClientServer clientServe, String name) throws java.rmi.RemoteException;
 
-    void receiveImageFiles(String[][] files) throws java.rmi.RemoteException;
+    void receiveImageFiles(String[][] files, String name) throws java.rmi.RemoteException;
 
     void getOption(int option, String process, String name) throws java.rmi.RemoteException;
 

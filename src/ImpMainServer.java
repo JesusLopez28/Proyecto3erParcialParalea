@@ -1,7 +1,10 @@
+import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
+import java.util.List;
 
 public class ImpMainServer extends UnicastRemoteObject implements MainServer {
     protected Map<String, ClientServer> clients;
@@ -10,6 +13,8 @@ public class ImpMainServer extends UnicastRemoteObject implements MainServer {
     protected String clientName;
     protected int option;
     protected String process;
+    protected JFrame frame;
+    protected JTextArea consoleArea;
 
     public ImpMainServer() throws RemoteException, IOException {
         super();
@@ -19,16 +24,18 @@ public class ImpMainServer extends UnicastRemoteObject implements MainServer {
         this.clientName = null;
         this.option = 0;
         this.process = null;
+
+        IU();
     }
 
     @Override
     public void registerClientServer(ClientServer clientServe, String name) throws RemoteException {
         clients.put(name, clientServe);
-        System.out.println("Client " + name + " registered");
+        consoleArea.append("Cliente " + name + " registrado\n");
     }
 
     @Override
-    public void receiveImageFiles(String[][] files) throws RemoteException {
+    public void receiveImageFiles(String[][] files, String name) throws RemoteException {
         if (imageFiles == null) {
             imageFiles = files;
         } else {
@@ -68,7 +75,7 @@ public class ImpMainServer extends UnicastRemoteObject implements MainServer {
             imageFiles = combinedFiles.toArray(new String[combinedFiles.size()][]);
         }
 
-        System.out.println("Received " + files.length + " images");
+        consoleArea.append("Recibidas " + files.length + " imágenes de " + name + "\n");
     }
 
     @Override
@@ -77,7 +84,7 @@ public class ImpMainServer extends UnicastRemoteObject implements MainServer {
         this.process = process;
         this.clientName = name;
 
-        System.out.println("Received option " + option + " and process " + process + " from " + name);
+        consoleArea.append("Recibida opción " + option + " y proceso " + process + " de " + name + "\n");
         sendImageFiles(imageFiles);
     }
 
@@ -96,11 +103,11 @@ public class ImpMainServer extends UnicastRemoteObject implements MainServer {
             start += numFilesToSend;
             remainingFiles--;
 
-            System.out.println("Sent " + filesToSend.length + " images to " + entry.getKey());
+            consoleArea.append("Enviando " + filesToSend.length + " imágenes a " + entry.getKey() + "\n");
             entry.getValue().receiveImageFiles(filesToSend, option, process);
         }
 
-        System.out.println("Sent " + files.length + " images to clients");
+        consoleArea.append("Enviado " + files.length + " imágenes a " + numClients + " clientes\n");
     }
 
     @Override
@@ -115,7 +122,7 @@ public class ImpMainServer extends UnicastRemoteObject implements MainServer {
         }
 
         if (processedImages.length == imageFiles.length) {
-            System.out.println("All images have been processed");
+            consoleArea.append("Todas las imágenes han sido procesadas\n");
             sendProcessedImages(processedImages);
             processedImages = null;
         }
@@ -123,7 +130,7 @@ public class ImpMainServer extends UnicastRemoteObject implements MainServer {
 
     @Override
     public void sendProcessedImages(String[][] files) throws RemoteException {
-        System.out.println("Sent " + files.length + " processed images to " + this.clientName);
+        consoleArea.append("Enviado " + files.length + " imágenes procesadas a " + this.clientName + "\n");
         clients.get(this.clientName).receiveProcessedImages(files);
     }
 
@@ -135,5 +142,42 @@ public class ImpMainServer extends UnicastRemoteObject implements MainServer {
     private String getFileExtension(String fileName) {
         int index = fileName.lastIndexOf(".");
         return index != -1 ? fileName.substring(index + 1) : "";
+    }
+
+    private void IU() {
+        frame = new JFrame("Servidor Principal");
+        frame.setSize(600, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setResizable(true);
+        frame.setLayout(new BorderLayout());
+
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new FlowLayout());
+
+        JButton button = new JButton("Limpiar arrays");
+        topPanel.add(button);
+
+        consoleArea = new JTextArea(10, 30);
+        consoleArea.setEditable(false);
+        JScrollPane consoleScroll = new JScrollPane(consoleArea);
+
+        frame.add(topPanel, BorderLayout.NORTH);
+        frame.add(consoleScroll, BorderLayout.CENTER);
+
+        button.addActionListener(e -> {
+            imageFiles = null;
+            processedImages = null;
+            clients.forEach((name, client) -> {
+                try {
+                    client.getClear();
+                } catch (RemoteException ex) {
+                    ex.printStackTrace();
+                }
+            });
+            consoleArea.append("Arrays limpiados\n");
+        });
+
+        frame.setVisible(true);
     }
 }
